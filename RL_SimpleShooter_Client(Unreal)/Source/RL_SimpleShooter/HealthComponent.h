@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RL_SIMPLESHOOTER_API UHealthComponent : public UActorComponent
 {
@@ -30,14 +29,18 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(BlueprintReadOnly)
+	float CurrentHealth = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	float RecvDamage;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.f;
-	float CurrentHealth = 0.f;
 
 	class AMyGameModeBase* GameMode;
 
 	UFUNCTION()
 	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* Instigator, AActor* DamageCauser);
-
 };
