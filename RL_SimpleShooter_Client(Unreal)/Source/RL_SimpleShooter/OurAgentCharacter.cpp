@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OurAgentCharacter.h"
+#include "Armor.h"
+#include "Weapon.h"
 
 AOurAgentCharacter::AOurAgentCharacter()
 {
@@ -26,6 +28,7 @@ void AOurAgentCharacter::ChangeWeapon(int32 _WeaponNum)
 
 	if (Weapons.Num() != 0)
 	{
+		WeaponNum = _WeaponNum;
 		CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(Weapons[_WeaponNum]);
 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
 		CurrentWeapon->SetOwner(this);
@@ -43,6 +46,7 @@ void AOurAgentCharacter::ChangeArmor(int32 _ArmorNum)
 
 	if (Armors.Num() != 0)
 	{
+		ArmorNum = _ArmorNum;
 		CurrentArmor = GetWorld()->SpawnActor<AArmor>(Armors[_ArmorNum]);
 		CurrentArmor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("ArmorSocket"));
 		CurrentArmor->SetOwner(this);

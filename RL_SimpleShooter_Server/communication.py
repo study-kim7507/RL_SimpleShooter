@@ -3,11 +3,12 @@ import threading
 import random # For Test
 
 STOP_FLAG = False
+CNT = 0
 
 Send_Buffer = None
 Receive_Buffer = None
 
-def Init(Send, Receive):
+def networkInit(Send, Receive):
     global Send_Buffer
     global Receive_Buffer
 
@@ -41,6 +42,8 @@ def send(socket):
     global Send_Buffer
     while True:
         if len(Send_Buffer) > 0:
+            # ['step', 0], ['step', 1], ['step', 2] 혹은 ['reset'] 이라는 데이터가 언리얼로 전송될 것임.
+            # [1, 0], [1, 1], [1, 2] 혹은 [0]이라는 값이 언리얼에서 확인 가능 -> URPacket = {'reset': 0, 'step': 1}
             socket.send(Send_Buffer[0])
             Send_Buffer.pop(0)
         if STOP_FLAG:
@@ -49,26 +52,13 @@ def send(socket):
 def receive(socket):
     global STOP_FLAG
     global Receive_Buffer
-    global Send_Buffer # For Test
+    global CNT
     while True:
-        # 처음 시작 시 최초 한 번은 초기 체력 0의 데미지를 받아옴
-        # 모델로부터 계산된 액션을 취한 뒤, 타격이 일어나면 데이터를 받음.
-        recvData = socket.recv(1024).decode()
-        print(stringToArray(recvData))
+        recvData = socket.recv(1024)
         if recvData:
-            randInt = str(random.randint(0, 2))
-            Send_Buffer.append(randInt.encode()) # For Test
+            CNT += 1
             Receive_Buffer.append(recvData)
         else:
             print('Disconeced')
             STOP_FLAG = True
             break
-
-
-# 클라이언트로부터 수신한 데이터를 파싱.
-# 현재 구현에서는 [현재 체력, 받은 피해]
-def stringToArray(recvData):
-    string_list = recvData.split(",")
-    float_list = [float(item) for item in string_list]
-
-    return float_list

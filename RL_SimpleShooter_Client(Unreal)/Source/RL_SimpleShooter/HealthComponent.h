@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTakeDamage);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RL_SIMPLESHOOTER_API UHealthComponent : public UActorComponent
 {
@@ -34,6 +36,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	float RecvDamage;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnTakeDamage OnTakeDamage;
 
 private:
 	UPROPERTY(EditAnywhere)

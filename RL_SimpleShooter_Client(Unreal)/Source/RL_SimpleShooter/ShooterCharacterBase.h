@@ -31,6 +31,8 @@ public:
 	class AWeapon* GetCurrentWeapon() { return CurrentWeapon; }
 	class AArmor* GetCurrentArmor() { return CurrentArmor; }
 	int32 GetCurrentWeaponNum() { return WeaponNum; }
+
+	UFUNCTION(BlueprintCallable)
 	int32 GetCurrentArmorNum() { return ArmorNum; }
 
 protected:

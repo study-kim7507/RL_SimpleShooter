@@ -58,6 +58,7 @@ void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDa
 
 	// Attacker의 공격을 맞은(방어)한 사람(Character)
 	AShooterCharacterBase* Defensor = Cast<AShooterCharacterBase>(DamagedActor);
+	
 	if (Defensor == nullptr) return;
 
 	// Defensor의 현재 방어구 번호
@@ -82,5 +83,9 @@ void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDa
 	if (CurrentHealth <= 0.f)
 		GameMode->ActorDied(Defensor);
 
-	UE_LOG(LogTemp, Warning, TEXT("Current Health : %f, %f"), CurrentHealth, RecvDamage);
+	UE_LOG(LogTemp, Warning, TEXT("%d, %d, Current Health : %f, RecvDamage : %f"), 
+		AttackerCurrentWeaponNum, DefensorCurrentArmorNum,
+		CurrentHealth, RecvDamage);
+
+	OnTakeDamage.Broadcast(); // 델리게이트 브로드캐스트
 }
