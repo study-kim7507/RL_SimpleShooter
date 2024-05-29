@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
+#include "Armor.h"
+#include "Weapon.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -34,12 +36,13 @@ void APlayerCharacter::MoveRight(float Value)
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	WeaponNum = -1;
+	ArmorNum = -1;
 	ChangeWeapon();
 	ChangeArmor();
 }
 void APlayerCharacter::ChangeWeapon()
 {
-	if (WeaponNum >= Weapons.Num()) WeaponNum = 0;
 	AWeapon* PreWeapon = nullptr;
 	if (CurrentWeapon != nullptr)
 	{
@@ -48,17 +51,17 @@ void APlayerCharacter::ChangeWeapon()
 
 	if (Weapons.Num() != 0)
 	{
+		WeaponNum++;
+		if (WeaponNum >= Weapons.Num()) WeaponNum = 0;
 		CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(Weapons[WeaponNum]);
 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
 		CurrentWeapon->SetOwner(this);
 		if (PreWeapon != nullptr) PreWeapon->Destroy();
-		WeaponNum++;
 	}
 }
 
 void APlayerCharacter::ChangeArmor()
 {
-	if (ArmorNum >= Armors.Num()) ArmorNum = 0;
 	AArmor* PreArmor = nullptr;
 	if (CurrentArmor != nullptr)
 	{
@@ -67,10 +70,12 @@ void APlayerCharacter::ChangeArmor()
 
 	if (Armors.Num() != 0)
 	{
+		ArmorNum++;
+		if (ArmorNum >= Armors.Num()) ArmorNum = 0;
 		CurrentArmor = GetWorld()->SpawnActor<AArmor>(Armors[ArmorNum]);
 		CurrentArmor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("ArmorSocket"));
 		CurrentArmor->SetOwner(this);
 		if (PreArmor != nullptr) PreArmor->Destroy();
-		ArmorNum++;
 	}
+	
 }

@@ -1,13 +1,19 @@
+'''
+    클라이언트와 데이터 송수신을 위한 함수 구현.
+    서버 -> 클라이언트 : Send_Buffer에 존재하는 데이터를 전송
+    클라이언트 -> 서버 : 클라이언트로부터 받은 데이터를 Receive_Buffer에 저장.
+'''
+
 import socket
 import threading
-import random # For Test
 
 STOP_FLAG = False
-CNT = 0
 
+# 송수신하는 데이터 저장을 위함.
 Send_Buffer = None
 Receive_Buffer = None
 
+# 서버 소켓을 설정하고, 클라이언트의 연결을 기다린 후, 데이터를 송수신하는 스레드 생성.
 def networkInit(Send, Receive):
     global Send_Buffer
     global Receive_Buffer
@@ -16,6 +22,7 @@ def networkInit(Send, Receive):
     Receive_Buffer = Receive
 
     # 서버 설정
+    # Local 기준, host = "127.0.0.1", port = "8888"
     host = "127.0.0.1"
     port = 8888
 
@@ -30,6 +37,7 @@ def networkInit(Send, Receive):
     client_socket, client_address = server_socket.accept()
     print(f"클라이언트 {client_address}가 연결되었습니다.")
 
+    # 송신을 위한 스레드, 수신을 위한 스레드 생성.
     sender = threading.Thread(target=send, args=(client_socket,))
     receiver = threading.Thread(target=receive, args=(client_socket,))
 
@@ -40,10 +48,11 @@ def networkInit(Send, Receive):
 def send(socket):
     global STOP_FLAG
     global Send_Buffer
+
+    # Send_Buffer에 데이터가 있는 경우.
+    # 즉, 클라이언트로 보낼 데이터가 존재하는 경우 클라이언트로 데이터를 전송
     while True:
         if len(Send_Buffer) > 0:
-            # ['step', 0], ['step', 1], ['step', 2] 혹은 ['reset'] 이라는 데이터가 언리얼로 전송될 것임.
-            # [1, 0], [1, 1], [1, 2] 혹은 [0]이라는 값이 언리얼에서 확인 가능 -> URPacket = {'reset': 0, 'step': 1}
             socket.send(Send_Buffer[0])
             Send_Buffer.pop(0)
         if STOP_FLAG:
@@ -52,11 +61,11 @@ def send(socket):
 def receive(socket):
     global STOP_FLAG
     global Receive_Buffer
-    global CNT
+
     while True:
+        # 클라이언트로부터 데이터가 수신되면 해당 데이터를 Receive_Buffer에 저장.
         recvData = socket.recv(1024)
         if recvData:
-            CNT += 1
             Receive_Buffer.append(recvData)
         else:
             print('Disconeced')

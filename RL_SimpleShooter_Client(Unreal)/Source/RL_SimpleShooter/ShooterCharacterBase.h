@@ -25,15 +25,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
 	void PullTrigger();
 	void HandleDestruction();
 
 	class AWeapon* GetCurrentWeapon() { return CurrentWeapon; }
 	class AArmor* GetCurrentArmor() { return CurrentArmor; }
-	int32 GetCurrentWeaponNum() { return WeaponNum; }
+	
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetCurrentArmorNum() { return ArmorNum; }
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurrentWeaponNum() { return WeaponNum; }
 
 protected:
 	// Called when the game starts or when spawned
