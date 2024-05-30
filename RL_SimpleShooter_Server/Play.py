@@ -2,6 +2,8 @@ from Model import Qnet
 import torch
 from GameMaster import GameMaster
 from Communication import networkInit
+import matplotlib.pyplot as plt
+import time
 
 Receive_Buffer = []
 Send_Buffer = []
@@ -9,29 +11,41 @@ Send_Buffer = []
 networkInit(Send_Buffer, Receive_Buffer)
 env = GameMaster(Send_Buffer, Receive_Buffer)
 
-q = Qnet()
+episodeNum = 1000
+PATH = './result/q_net' + str(episodeNum) + '.pth'
 
-# 얼마나 학습한 network를 들고 올 것인가
-trainNum = 500
-# load 할 q_network를 Play.py 와 같은 directory에 위치 할 것
-PATH = './params7/q_net' + str(trainNum) + '.pth'
+q = Qnet()
 q.load_state_dict(torch.load(PATH))
 
 q_target = Qnet()
 q_target.load_state_dict(q.state_dict())
 
 score = 0.0
+startTime = time.time()
+saveResultTime = []
+saveResultScore = []
 
-for n_epi in range(100):
-    s = env.reset()
-    done = False
+s = env.reset()
+while True:
+    a = q.sample_action(torch.from_numpy(s).float(), 0)
+    s_p, r, done = env.step(a)
+    s = s_p
 
-    while not done:
-        a = q.sample_action(torch.from_numpy(s).float(), 0)
-        s_p, r, done, _ = env.step(a)
-        s = s_p
-        score += r
-        if done:
-            print(score)
-            score = 0.0
-            break
+    score += r
+
+    # 진행정도에 따른 점수를 시각화하기 위함.
+    currentTime = time.time() - startTime
+    saveResultTime.append(currentTime)
+    saveResultScore.append(score)
+
+    if done == 1:
+        plt.plot(saveResultTime, saveResultScore)
+
+        plt.title("Episode num : " + str(episodeNum))
+        plt.xlabel("Time")
+        plt.ylabel("Accumulated Rewards")
+
+        plt.show()
+        break
+
+

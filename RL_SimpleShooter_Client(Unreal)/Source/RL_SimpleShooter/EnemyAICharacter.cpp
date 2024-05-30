@@ -2,6 +2,8 @@
 
 
 #include "EnemyAICharacter.h"
+#include "Armor.h"
+#include "Weapon.h"
 
 AEnemyAICharacter::AEnemyAICharacter()
 {
@@ -12,13 +14,15 @@ void AEnemyAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	WeaponNum = -1;
+	ArmorNum = -1;
 	ChangeWeapon();
 	ChangeArmor();
 }
 
 void AEnemyAICharacter::ChangeWeapon()
 {
-	WeaponNum = FMath::RandRange(0, Weapons.Num()-1);
+	// WeaponNum = FMath::RandRange(0, Weapons.Num()-1);
 	AWeapon* PreWeapon = nullptr;
 	if (CurrentWeapon != nullptr)
 	{
@@ -27,6 +31,8 @@ void AEnemyAICharacter::ChangeWeapon()
 
 	if (Weapons.Num() != 0)
 	{
+		WeaponNum++;
+		if (WeaponNum >= Weapons.Num()) WeaponNum = 0;
 		CurrentWeapon = GetWorld()->SpawnActor<AWeapon>(Weapons[WeaponNum]);
 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket"));
 		CurrentWeapon->SetOwner(this);
@@ -36,7 +42,7 @@ void AEnemyAICharacter::ChangeWeapon()
 
 void AEnemyAICharacter::ChangeArmor()
 {
-	ArmorNum = FMath::RandRange(0, Armors.Num() - 1);
+	// ArmorNum = FMath::RandRange(0, Armors.Num() - 1);
 	AArmor* PreArmor = nullptr;
 	if (CurrentArmor != nullptr)
 	{
@@ -45,6 +51,8 @@ void AEnemyAICharacter::ChangeArmor()
 
 	if (Armors.Num() != 0)
 	{
+		ArmorNum++;
+		if (ArmorNum >= Armors.Num()) ArmorNum = 0;
 		CurrentArmor = GetWorld()->SpawnActor<AArmor>(Armors[ArmorNum]);
 		CurrentArmor->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("ArmorSocket"));
 		CurrentArmor->SetOwner(this);

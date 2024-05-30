@@ -30,7 +30,6 @@ class Qnet(nn.Module):
         if coin < epsilon:
             return random.randint(0, 2)
         else:
-            print(out)
             return out.argmax().item()
 
 

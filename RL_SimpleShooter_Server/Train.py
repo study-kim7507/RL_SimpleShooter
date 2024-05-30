@@ -97,7 +97,7 @@ for n_epi in range(1000):
 
     if memory.size() > 100:
          train(q, q_target, memory, optimizer)
-    if n_epi % 5 == 0:
+    if n_epi % 2 == 0:
         q_target.load_state_dict(q.state_dict())
 
     # 50번의 에피소드마다 모델을 저장.
